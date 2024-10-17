@@ -1,0 +1,77 @@
+﻿<Window x:Class="Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:local="clr-namespace:Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate x:Key="AlgDataTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding metric}" />
+                <TextBlock Text="{Binding route}" Grid.Column="1"  />
+            </Grid>
+        </DataTemplate>
+
+        <local:SelectionConverter x:Key="SelectionConverter" />
+        <local:MutationRateConverter x:Key="MutationRateConverter" />
+        <local:PopulationCountConverter x:Key="PopulationCountConverter" />
+        <local:CitiesCountConverter x:Key="CitiesCountConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="173*"/>
+            <ColumnDefinition Width="627*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Параметры ген.алгоритма" FontWeight="Bold" Margin="0 5 0 0"/>
+
+            <Label Margin="0,10,0,0" Content="Число городов: " HorizontalAlignment="Left"/>
+            <TextBox Margin="0,5,0,0" Text="{Binding citiescount, ValidatesOnDataErrors=True,
+                    Converter={StaticResource CitiesCountConverter}, Mode=TwoWay}"
+                    x:Name="CitiescountTextBox"/>
+
+            <Label Margin="0,10,0,0" Content="Размер популяции: " HorizontalAlignment="Left"/>
+            <TextBox Margin="0,5,0,0" Text="{Binding populationcount, ValidatesOnDataErrors=True,
+                    Converter={StaticResource PopulationCountConverter}, Mode=TwoWay}"
+                    x:Name="PopulationTextBox"/>
+
+            <Label Margin="0,5,0,0" Content="Число особей для селекции: " HorizontalAlignment="Left"/>
+            <TextBox Margin="0,5,0,0" Text="{Binding selection, ValidatesOnDataErrors=True, 
+                Converter={StaticResource SelectionConverter}, Mode=TwoWay}"
+                     x:Name="SelectionTextBox"/>
+
+            <Label Margin="0,10,0,0" Content="Вероятность мутации: " HorizontalAlignment="Left"/>
+            <TextBox Margin="0,5,0,0" Text="{Binding mutationrate, 
+                Converter={StaticResource MutationRateConverter}, Mode=TwoWay, ValidatesOnDataErrors=True}"
+                     x:Name="MutationrateTextBox"/>
+
+            <Button Content="Data Commit"  Command="Save" Margin="0, 20, 0, 0"/>
+            <Button Content="Gen Algorytm Start" IsEnabled="False" Name="Start_button" 
+                    Click="Algorytm_Start" Margin="0, 20, 0, 0"/>
+            <Button Content="Gen Algorytm Stop" Click="Termination" Name="Stop_button"
+                    IsEnabled="False" Margin="0, 20, 0, 0"/>
+            <Button Content="Show Results" Click="Show" Name="Show_button"
+                    IsEnabled="False" Margin="0, 20, 0, 0"/>
+
+        </StackPanel>
+        <oxy:PlotView Name="plot" Grid.Column="1" HorizontalAlignment="Center" Height="261" Width="428" Margin="0, 120, 0, 0"/>
+        <ListBox Grid.Column="1" x:Name="AlgorytmOutputListBox" ItemsSource="{Binding Result, Mode=Default,
+    UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="130" VerticalAlignment="Top" MaxHeight="500"
+                 
+            />
+
+
+    </Grid>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="Save_DataCommandHandler" CanExecute="CanSave_DataCommandHandler"/>
+    </Window.CommandBindings>
+</Window>
