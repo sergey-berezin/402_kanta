@@ -165,7 +165,7 @@ namespace Wpf
                 Result = algorytm._bestRoute;
                 //RouteData bestRoute = algorytm.Run(out bestResult);
                 MessageBox.Show("Algorytm Terminated");
-                MessageBox.Show($"{algorytm._bestDistance.Value} \n algorytm._bestRoute");
+                MessageBox.Show($"{algorytm._bestDistance.Value} \n {algorytm._bestRoute}");
             }
             catch (Exception ex)
             {
