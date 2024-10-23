@@ -9,11 +9,11 @@ namespace WpfApp
 {
     public class OXYPlot
     {
-        ViewData data;
+        List<double> data;
 
         public PlotModel plot { get; private set; }
 
-        public OXYPlot(ViewData data)
+        public OXYPlot(List<double> data)
         {
             this.plot = new PlotModel { Title = "Metric" };
             this.data = data;
@@ -56,9 +56,9 @@ namespace WpfApp
                     Position = AxisPosition.Bottom,
                     Title = "X",
                 });
-                RefinedGridLine = addLine(RefinedGridLine, data.OutputData, 2, OxyColors.Green);
+                RefinedGridLine = addLine(RefinedGridLine, data, 2, OxyColors.Green);
                 RefinedGridLine.Legends.Add(new OxyPlot.Legends.Legend());
-                RefinedGridLine = addMarkers(RefinedGridLine, data.OutputData, OxyColors.Red);
+                RefinedGridLine = addMarkers(RefinedGridLine, data, OxyColors.Red);
                 plot = RefinedGridLine;
             }
             catch (Exception ex) { MessageBox.Show("from RefinedGridLine"); MessageBox.Show(ex.Message); }

@@ -14,7 +14,7 @@ using OxyPlot;
 
 namespace Wpf
 {
-    	public class Output_Data
+    		public class Output_Data
 	{
 		public int epoch;
 		public string metric;
@@ -88,8 +88,19 @@ namespace Wpf
 			}
 		}
 
+		OXYPlot oxyPlotModel;
 
-		double bestResult;
+		private PlotModel _plot;
+		public PlotModel plot
+		{
+			get { return _plot; }
+			set
+			{
+				_plot = value;
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("Plot"));
+			}
+		}
 
 		private List<string> _Result;
 		public List<string> Result
@@ -115,36 +126,14 @@ namespace Wpf
 					PropertyChanged(this, new PropertyChangedEventArgs("OutputData"));
 			}
 		}
-		CancellationTokenSource cts;
-		public void ProgramStart()
-		{
-			cts = new CancellationTokenSource();
-
-			// Запускаем асинхронную операцию
-			var task = Task.Run(() => Process(cts.Token), cts.Token);
-		}
-
-		public void ProgramCancel()
-		{
-			// Запрашиваем отмену операции
-			cts.Cancel();
-			cts.Dispose();
-		}
 
 		public void Process(CancellationToken cancellationToken)
 		{
 			try
 			{
 				OutputData = new List<double>();
-				//for (var i = 0; i < 20; i++)
-				//{
-				//    OutputData.Add(i);
-				//}
-
-				bestResult = Double.MaxValue;
 
 				var algorytm = new GenAlgorytm(citiescount, populationcount, mutationrate, selection);
-				//algorytm.AlgorytmOutput += Output;
 
 				algorytm._bestRoute = null;
 				algorytm._bestDistance = double.MaxValue;
@@ -164,9 +153,10 @@ namespace Wpf
 						Result = [(new Output_Data(epoch, algorytm._bestDistance.Value, algorytm._bestRoute).ToString())];
 						prev_distance = algorytm._bestDistance.Value;
 						OutputData.Add(algorytm._bestDistance.Value);
+						oxyPlotModel = new OXYPlot(OutputData);
+						plot = oxyPlotModel.plot;
 					}
 				}
-				//RouteData bestRoute = algorytm.Run(out bestResult);
 				MessageBox.Show("Algorytm Terminated");
 				MessageBox.Show($"{algorytm._bestDistance.Value} \n {algorytm._bestRoute}");
 			}

@@ -14,7 +14,7 @@
         <local:PopulationCountConverter x:Key="PopulationCountConverter" />
         <local:CitiesCountConverter x:Key="CitiesCountConverter" />
     </Window.Resources>
-    <Grid>
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="173*"/>
             <ColumnDefinition Width="627*"/>
@@ -48,11 +48,10 @@
                     Click="Algorytm_Start" Margin="0, 20, 0, 0"/>
             <Button Content="Gen Algorytm Stop" Click="Termination" Name="Stop_button"
                     IsEnabled="False" Margin="0, 20, 0, 0"/>
-            <Button Content="Show Results" Click="Show" Name="Show_button"
-                    IsEnabled="False" Margin="0, 20, 0, 0"/>
 
         </StackPanel>
-        <oxy:PlotView Name="plot" Grid.Column="1" HorizontalAlignment="Center" Height="261" Width="428" Margin="0, 120, 0, 0"/>
+        <oxy:PlotView Name="plot" Grid.Column="1" HorizontalAlignment="Center" Height="261" Width="428" Margin="0, 120, 0, 0" 
+                      Model="{Binding plot, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
         <ListBox Grid.Column="1" x:Name="AlgorytmOutputListBox" ItemsSource="{Binding Result, Mode=TwoWay,
     UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="50" VerticalAlignment="Top"
                  Margin="0, 13, 0, 0"
