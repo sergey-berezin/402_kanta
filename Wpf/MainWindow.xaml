@@ -7,20 +7,33 @@
         xmlns:local="clr-namespace:Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-        <Window.Resources>
+            <Window.Resources>
 
         <local:SelectionConverter x:Key="SelectionConverter" />
         <local:MutationRateConverter x:Key="MutationRateConverter" />
         <local:PopulationCountConverter x:Key="PopulationCountConverter" />
         <local:CitiesCountConverter x:Key="CitiesCountConverter" />
     </Window.Resources>
-        <Grid>
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="173*"/>
             <ColumnDefinition Width="627*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <StackPanel>
+        <Menu Grid.Row="0" Margin="0,0,0,0" Grid.ColumnSpan="2">
+            <MenuItem Header="Save">
+                <MenuItem Header="Save data to File" Click="Save_Click"/>
+            </MenuItem>
+            <MenuItem Header="Load">
+                <MenuItem Header="Load data from File" Click="Load_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <StackPanel Grid.Row="1">
             <TextBlock Text="Параметры ген.алгоритма" FontWeight="Bold" Margin="0 5 0 0"/>
 
             <Label Margin="0,10,0,0" Content="Число городов: " HorizontalAlignment="Left"/>
@@ -50,14 +63,11 @@
                     IsEnabled="False" Margin="0, 20, 0, 0"/>
 
         </StackPanel>
-        <oxy:PlotView Name="plot" Grid.Column="1" HorizontalAlignment="Center" Height="261" Width="428" Margin="0, 120, 0, 0" 
+        <oxy:PlotView Grid.Row="1" Name="plot" Grid.Column="1" HorizontalAlignment="Center" Height="261" Width="428" Margin="0, 120, 0, 0" 
                       Model="{Binding plot, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
-        <ListBox Grid.Column="1" x:Name="AlgorytmOutputListBox" ItemsSource="{Binding Result, Mode=TwoWay,
-    UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="50" VerticalAlignment="Top"
-                 Margin="0, 13, 0, 0"
-                 />
-
-
+        <ListBox Grid.Row="1" Grid.Column="1" x:Name="AlgorytmOutputListBox" ItemsSource="{Binding Result, Mode=TwoWay,
+                UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Height="50" VerticalAlignment="Top"
+                Margin="0, 13, 0, 0"/>
     </Grid>
 
     <Window.CommandBindings>

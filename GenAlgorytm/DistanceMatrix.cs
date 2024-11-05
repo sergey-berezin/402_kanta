@@ -22,6 +22,12 @@ namespace Algorytm
             _size = numCities;
         }
 
+        public DistanceMatrix(int numCities, double[][] matrix)
+        {
+            _matrix = matrix;
+            _size = numCities;
+        }
+
         public static DistanceMatrix Initialise(int NCities)
         {
             var distanceMatrix = new DistanceMatrix(NCities);
