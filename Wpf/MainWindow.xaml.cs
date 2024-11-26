@@ -1,34 +1,32 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Algorytm;
-using OxyPlot;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Win32;
+using WpfApp;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Wpf
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
 
         public ViewData data;
         private CancellationTokenSource cts;
+
+        private String openedExperimentName = "...";
+
+        private String Reestr = "F:\\Projects\\Practicum_2024-25\\Save_data\\Reestr.json";
+
+        private String files_root = "F:\\Projects\\Practicum_2024-25\\Save_data";
+
+        List<Experiment> experiments;
         public MainWindow()
         {
             InitializeComponent();
             data = new ViewData();
             DataContext = data;
+            MessageBox.Show("Rules:\n" + "If new experiment needed, choose parameters in panel, then click 'Data commit', then 'Start'\n" + "If loaded experiment, then click 'Start'");
+
             CommandBinding cmb1 = new CommandBinding();
             cmb1.Command = ApplicationCommands.Save;
             cmb1.CanExecute += CanSave_DataCommandHandler;
@@ -70,62 +68,103 @@ namespace Wpf
         private void Save_DataCommandHandler(object sender, ExecutedRoutedEventArgs e)
         {
             Start_button.IsEnabled = true;
+            data.loaded = false;
+        }
+
+        public Experiment? LoadExperimentData(string experimentName)
+        {
+
+            if (!File.Exists(Reestr)) return null;
+
+            var experiments = JsonConvert.DeserializeObject<List<Experiment>>(File.ReadAllText(Reestr));
+            var selectedExperiment = experiments.FirstOrDefault(exp => exp.Name == experimentName);
+
+            return selectedExperiment;
+        }
+
+        public List<Experiment> LoadAllExperiments()
+        {
+            if (!File.Exists(Reestr))
+            {
+                return new List<Experiment>();
+            };
+
+            var experiments = JsonConvert.DeserializeObject<List<Experiment>>(File.ReadAllText(Reestr))!;
+
+            return experiments;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.DefaultExt = ".json";
-            saveFileDialog.Filter = "Json files (.json)|*.json";
-            saveFileDialog.CreatePrompt = true;
-            if (saveFileDialog.ShowDialog() == false)
+            Start_button.IsEnabled = true;
+            Stop_button.IsEnabled = false;
+
+            var experimentName = "";
+            var nameInputDialog = new NameWindow(openedExperimentName);
+            if (nameInputDialog.ShowDialog() == true)
             {
-                MessageBox.Show("Saving Error");
-                return;
+                experimentName = nameInputDialog.ExperimentName;
+                if (LoadExperimentData(experimentName) != null)
+                {
+                    MessageBox.Show($"Existing experiment would be rewritten");
+                }
             }
             else
             {
-                string FilePath = saveFileDialog.FileName;
-                saveFileDialog.DefaultExt = ".json";
-                saveFileDialog.Filter = "Json files (.json)|*.json";
-
-                try
-                {
-                    string backup = "F:\\Projects\\Practicum_2024-25\\Save_data\\main_data.json";
-                    data.SaveJson(FilePath, backup);
-                    MessageBox.Show("You saved in: " + FilePath + "; Backup: " + backup);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                MessageBox.Show($"New experiment will be created");
+                return;
             }
+
+            List<Experiment> experiments;
+            if (File.Exists(Reestr))
+            {
+                experiments = JsonConvert.DeserializeObject<List<Experiment>>(File.ReadAllText(Reestr));
+            }
+            else
+            {
+                experiments = new List<Experiment>();
+            }
+
+            var solverFileName = $"{files_root}\\{experimentName}.json";
+            var handler = new SafeJsonFileHandler<Algorytm_data>(solverFileName);
+            handler.SaveData(data.data_to_json);
+
+            Experiment? newExper = LoadExperimentData(experimentName);
+            if (newExper != null) return;
+
+            newExper = new Experiment(experimentName, solverFileName);
+            experiments.Add(new Experiment(experimentName, solverFileName));
+
+            var experhandler = new SafeJsonFileHandler<List<Experiment>>(Reestr);
+            experhandler.SaveData(experiments);
+
         }
 
         private void Load_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.DefaultExt = ".json";
-            openFileDialog.Filter = "Json files (.json)|*.json";
-            if (openFileDialog.ShowDialog() == false)
+            List<Experiment> experiments = LoadAllExperiments();
+            if (experiments.Count == 0)
             {
-                MessageBox.Show("Loading Error");
+                MessageBox.Show($"No experiments are created yet.");
                 return;
             }
-            else
+
+            SelectionWindow selectionWindow = new SelectionWindow(experiments, Reestr);
+
+            if (selectionWindow.ShowDialog() == false) return;
+
+            Experiment selectedExperiment = selectionWindow.SelectedExperiment;
+
+            if (!data.LoadJson(selectedExperiment.FilePath))
             {
-                string FilePath = openFileDialog.FileName;
-                try
-                {
-                    data.LoadJson(FilePath);
-                    MessageBox.Show("You loaded from: " + FilePath);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return;
-                }
-            }
+                MessageBox.Show($"Failed to load experiment.");
+                return;
+            };
+
+            openedExperimentName = selectedExperiment.Name;
+
+            Start_button.IsEnabled = true;
+
         }
     }
 }

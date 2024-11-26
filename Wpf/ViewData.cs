@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Xml.Linq;
 using Algorytm;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OxyPlot;
 using WpfApp;
 
@@ -246,20 +236,6 @@ namespace Wpf
             catch (Exception ex)
             {
                 MessageBox.Show($"Error while processing algorytm: {ex.Message}", "Calculation Error");
-            }
-        }
-
-        public void SaveJson(string filename, string backup)
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(data_to_json);
-                File.WriteAllText(filename, json);
-                File.WriteAllText(backup, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving data: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

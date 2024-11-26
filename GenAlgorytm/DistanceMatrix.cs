@@ -16,6 +16,11 @@ namespace Algorytm
             get { return _size; }
         }
 
+        public double[][] matrix
+        {
+            get { return _matrix; }
+        }
+
         public DistanceMatrix(int numCities)
         {
             _matrix = new double[numCities][];
