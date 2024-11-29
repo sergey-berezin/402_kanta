@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Algorytm
@@ -13,14 +14,16 @@ namespace Algorytm
             get { return Cities_; }
         }
 
-        internal RouteData(int[] cities)
+        //[JsonConstructor]
+        //public RouteData() { }
+        public RouteData(int[] Сities)
         {
-            Cities_ = cities;
+            Cities_ = Сities;
         }
 
-        internal RouteData(int nCities)
+        public RouteData(int Cities)
         {
-            Cities_ = Enumerable.Range(0, nCities).ToArray();
+            Cities_ = Enumerable.Range(0, Cities).ToArray();
             Random.Shared.Shuffle(Cities_);
         }
 

@@ -11,19 +11,15 @@ namespace Algorytm
 {
     public class GenAlgorytm
     {
-
         public readonly int populationCount_;
         public readonly double mutationFrequency_;
 
-        public readonly DistanceMatrix distanceMatrix_;
+        public DistanceMatrix distanceMatrix_;
         public readonly int citiesCount_;
         public readonly int selection_;
 
         public RouteData? _bestRoute = null;
         public double? _bestDistance = null;
-
-        //public bool isRunning = true;
-        //public event Action<double, RouteData>? AlgorytmOutput;
 
         public GenAlgorytm(int NCities, int populationCount, double mutationFrequency, int selection_)
         {
@@ -85,34 +81,5 @@ namespace Algorytm
             }
             return newPopulation.ToList();
         }
-
-        //public RouteData? Run(out double bestDistance)
-        //{
-        //    _bestRoute = null;
-        //    _bestDistance = double.MaxValue;
-
-        //    var epoch = 0;
-        //    var population = InitializePopulation();
-        //    var prev_distance = double.MaxValue;
-
-        //    Task task = new Task(() =>
-        //    {
-        //        while (true)
-        //        {
-        //            population = Epoch(population);
-        //            if (cancellationToken.IsCancellationRequested) break;
-        //            epoch++;
-        //            if (_bestDistance.Value != prev_distance)
-        //            {
-        //                prev_distance = _bestDistance.Value;
-        //                AlgorytmOutput?.Invoke(_bestDistance.Value, _bestRoute);
-        //            }
-        //        }
-        //    }, token);
-        //    task.Start();
-
-        //    bestDistance = _bestDistance.Value;
-        //    return _bestRoute;
-        //}
     }
 }
